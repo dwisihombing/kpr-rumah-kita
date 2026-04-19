@@ -227,7 +227,7 @@ export default function App() {
     { rate: 5.75, years: 5 }
   ]);
 
-  const [floatingRate, setFloatingRate] = useState<number>(11.0);
+  const [floatingRate, setFloatingRate] = useState<number>(9.0);
   const [tenor, setTenor] = useState<number>(20);
   const [activeTab, setActiveTab] = useState<"analysis" | "schedule">("analysis");
   const [monthlyIncome, setMonthlyIncome] = useState<number>(25000000);
@@ -1055,7 +1055,7 @@ export default function App() {
       </div>
 
         {/* Lower Row: Financial Data & AI advisor */}
-        <div className="hidden  flex flex-col lg:flex-row gap-12 items-start mt-16"> //hilangkan kata hidden jika ingin memunculkan menu financial data dan ai advisor
+        <div className="hidden  flex flex-col lg:flex-row gap-12 items-start mt-16"> {/*hilangkan hidden untuk memunculkan kembali Financial Data & AI advisor*/}
           {/* Financial Data Section */}
           <div className="w-full lg:w-96 lg:flex-none h-full">
             <div className={cn(
