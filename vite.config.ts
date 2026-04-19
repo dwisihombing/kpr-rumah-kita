@@ -5,7 +5,7 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   // PENTING: Ganti 'nama-repo-anda' dengan nama repository GitHub Anda
-  base: '/nama-repo-anda/', 
+  base: '/kpr-rumah-kita/', 
   plugins: [
     react(), 
     tailwindcss()
