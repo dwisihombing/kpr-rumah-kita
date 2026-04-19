@@ -36,5 +36,27 @@
 ### Langkah-langkah
 1. **Clone repository ini:**
    ```bash
-   git clone https://github.com/username/KPR-Rumah-Kita.git
+   git clone https://github.com/dwisihombing/kpr-rumah-kita
    cd KPR-Rumah-Kita
+   Instal dependensi:
+2. **Instal dependensi:**
+   ```bash
+   npm install
+3. **Konfigurasi Environment:**
+   Buat file .env di root folder dan tambahkan API Key Anda:
+   ```bash
+   GEMINI_API_KEY=your_api_key_here
+4. Jalankan aplikasi:
+   ```Bash
+   npm run dev
+   
+Buka browser di alamat http://localhost:3000
+
+
+
+
+
+<div align="center">
+Dibuat dengan ❤️ untuk membantu perencanaan hunian impian.
+</div>
+
