@@ -36,15 +36,14 @@ import {
 } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 
-const reportRef = useRef<HTMLDivElement>(null); // Ref untuk menangkap area laporan
+
 
 
 // Translations dictionary
@@ -215,6 +214,9 @@ interface RateTier {
 }
 
 export default function App() {
+
+const reportRef = useRef<HTMLDivElement>(null); // Ref untuk menangkap area laporan
+
   const [lang, setLang] = useState<"ID" | "EN">(() => {
     return (localStorage.getItem("app-lang") as "ID" | "EN") || "ID";
   });
@@ -425,25 +427,8 @@ const exportToCSV = () => {
 };
 
 // Fungsi Export ke PDF (Tampilan Visual)
-const exportToPDF = async () => {
-  if (!reportRef.current) return;
-
-  const element = reportRef.current;
-  const canvas = await html2canvas(element, {
-    scale: 2, // Meningkatkan kualitas gambar agar tidak pecah
-    useCORS: true,
-    backgroundColor: isDark ? '#0f172a' : '#f8fafc' // Sesuaikan warna background
-  });
-  
-  const imgData = canvas.toDataURL('image/png');
-  const pdf = new jsPDF({
-    orientation: 'portrait',
-    unit: 'px',
-    format: [canvas.width / 2, canvas.height / 2] // Menyesuaikan ukuran canvas
-  });
-
-  pdf.addImage(imgData, 'PNG', 0, 0, canvas.width / 2, canvas.height / 2);
-  pdf.save(`KPR_Analysis_${new Date().getTime()}.pdf`);
+const exportToPDF = () => {
+  window.print(); // Membuka dialog print browser
 };
 
 
@@ -458,6 +443,7 @@ const exportToPDF = async () => {
   isDark ? "bg-slate-900/80 border-slate-800 backdrop-blur-md" : "bg-white border-slate-200"
 )}>
   <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    {/* Sisi Kiri: Logo */}
     <div className="flex items-center gap-3">
       <div className={cn(
         "w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg",
@@ -474,8 +460,9 @@ const exportToPDF = async () => {
       </div>
     </div>
 
-    {/* --- AREA TOMBOL EXPORT BARU --- */}
-    <div className="hidden md:flex items-center gap-2">
+    {/* Sisi Kanan: Export + Bahasa + Tema (Digabung jadi satu grup) */}
+    <div className="flex items-center gap-2">
+      {/* Tombol Export PDF */}
       <button 
         onClick={exportToPDF}
         className={cn(
@@ -486,8 +473,10 @@ const exportToPDF = async () => {
         )}
       >
         <Download size={14} />
-        <span>PDF</span>
+        <span className="hidden sm:inline">PDF</span>
       </button>
+
+      {/* Tombol Export CSV */}
       <button 
         onClick={exportToCSV}
         className={cn(
@@ -498,12 +487,9 @@ const exportToPDF = async () => {
         )}
       >
         <TableIcon size={14} />
-        <span>CSV</span>
+        <span className="hidden sm:inline">Export Jadwal Angsuran</span>
       </button>
-    </div>
-    {/* --- END AREA TOMBOL EXPORT --- */}
 
-    <div className="flex items-center gap-2">
       {/* Language Toggle */}
       <button 
         onClick={() => setLang(lang === "ID" ? "EN" : "ID")}
@@ -1273,7 +1259,7 @@ const exportToPDF = async () => {
           </div>
           </div>
         </div>
-        
+
       </main>
 
       {/* Footer */}

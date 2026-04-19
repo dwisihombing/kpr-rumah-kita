@@ -15,3 +15,60 @@
     z-index: 10;
   }
 }
+
+@media print {
+  /* 1. SEMBUNYIKAN elemen yang tidak perlu */
+  header, 
+  button, 
+  .no-print,
+  footer {
+    display: none !important;
+  }
+
+  /* 2. PAKSA semua elemen menjadi Light Mode saat diprint */
+  /* Ini akan menghilangkan kotak hitam besar */
+  body, .min-h-screen {
+    background-color: white !important;
+    color: black !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Reset semua warna background div menjadi putih dan teks menjadi hitam */
+  div, section, main {
+    background-color: white !important;
+    color: black !important;
+    border-color: #e2e8f0 !important; /* Warna border abu-abu muda */
+  }
+
+  /* Khusus untuk input dan select agar tetap terlihat */
+  input, select {
+    background-color: #f8fafc !important;
+    color: black !important;
+    border: 1px solid #cbd5e1 !important;
+  }
+
+  /* Perbaikan Layout agar tidak terpotong */
+  .grid {
+    display: block !important;
+  }
+  
+  .lg\:grid-cols-12 {
+    display: block !important;
+  }
+
+  .lg\:col-span-4, .lg\:col-span-8 {
+    width: 100% !important;
+    margin-bottom: 2rem !important;
+  }
+
+  /* Memaksa browser mencetak warna background yang tersisa (seperti warna orange) */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  @page {
+    margin: 1cm;
+  }
+}

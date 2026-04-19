@@ -3,16 +3,19 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import { defineConfig } from 'vite';
 
-export default defineConfig({
-  // PENTING: Ganti 'nama-repo-anda' dengan nama repository GitHub Anda
-  base: '/kpr-rumah-kita/', 
-  plugins: [
-    react(), 
-    tailwindcss()
-  ],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, '.'),
+export default defineConfig(({ mode }) => {
+  return {
+    // DINAMIS: Jika mode production (deploy), pakai nama repo. Jika dev, pakai '/'
+    base: mode === 'production' ? '/kPR-Rumah-Kita/' : '/', 
+    
+    plugins: [
+      react(), 
+      tailwindcss()
+    ],
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, '.'),
+      },
     },
-  },
+  };
 });
