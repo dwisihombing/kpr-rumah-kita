@@ -36,10 +36,16 @@ import {
 } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+
+const reportRef = useRef<HTMLDivElement>(null); // Ref untuk menangkap area laporan
+
 
 // Translations dictionary
 const translations = {
@@ -390,6 +396,57 @@ export default function App() {
     }));
   }, [results.schedule, loanAmount]);
 
+// Fungsi Export ke CSV (Hanya Tabel)
+const exportToCSV = () => {
+  // Header CSV
+  const headers = [t.month, t.date, t.payment, t.principal, t.interest, t.balance];
+  
+  // Map data schedule ke format CSV (tanpa simbol Rp agar bisa dihitung di Excel)
+  const rows = results.schedule.map(item => [
+    item.month,
+    item.date.toLocaleDateString(lang === "ID" ? "id-ID" : "en-US"),
+    item.payment,
+    item.principal,
+    item.interest,
+    item.remainingBalance
+  ]);
+
+  const csvContent = [
+    headers.join(","), 
+    ...rows.map(row => row.join(","))
+  ].join("\n");
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", `KPR_Schedule_${new Date().getTime()}.csv`);
+  link.click();
+};
+
+// Fungsi Export ke PDF (Tampilan Visual)
+const exportToPDF = async () => {
+  if (!reportRef.current) return;
+
+  const element = reportRef.current;
+  const canvas = await html2canvas(element, {
+    scale: 2, // Meningkatkan kualitas gambar agar tidak pecah
+    useCORS: true,
+    backgroundColor: isDark ? '#0f172a' : '#f8fafc' // Sesuaikan warna background
+  });
+  
+  const imgData = canvas.toDataURL('image/png');
+  const pdf = new jsPDF({
+    orientation: 'portrait',
+    unit: 'px',
+    format: [canvas.width / 2, canvas.height / 2] // Menyesuaikan ukuran canvas
+  });
+
+  pdf.addImage(imgData, 'PNG', 0, 0, canvas.width / 2, canvas.height / 2);
+  pdf.save(`KPR_Analysis_${new Date().getTime()}.pdf`);
+};
+
+
   return (
     <div className={cn(
       "min-h-screen font-sans selection:bg-orange-100 selection:text-orange-900 transition-colors duration-300",
@@ -397,56 +454,88 @@ export default function App() {
     )}>
       {/* Header */}
       <header className={cn(
-        "border-b sticky top-0 z-50 transition-colors duration-300",
-        isDark ? "bg-slate-900/80 border-slate-800 backdrop-blur-md" : "bg-white border-slate-200"
+  "border-b sticky top-0 z-50 transition-colors duration-300",
+  isDark ? "bg-slate-900/80 border-slate-800 backdrop-blur-md" : "bg-white border-slate-200"
+)}>
+  <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <div className="flex items-center gap-3">
+      <div className={cn(
+        "w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg",
+        isDark ? "bg-orange-600 shadow-orange-900/20" : "bg-slate-900 shadow-slate-200"
       )}>
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className={cn(
-              "w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg",
-              isDark ? "bg-orange-600 shadow-orange-900/20" : "bg-slate-900 shadow-slate-200"
-            )}>
-              <Home size={22} strokeWidth={2.5} />
-            </div>
-            <div>
-              <h1 className={cn(
-                "text-lg font-bold tracking-tight leading-none",
-                isDark ? "text-slate-100" : "text-slate-900"
-              )}>{t.appName}</h1>
-              <p className="text-[10px] uppercase tracking-widest font-semibold text-slate-400 mt-1">{t.appSubName}</p>
-            </div>
-          </div>
+        <Home size={22} strokeWidth={2.5} />
+      </div>
+      <div>
+        <h1 className={cn(
+          "text-lg font-bold tracking-tight leading-none",
+          isDark ? "text-slate-100" : "text-slate-900"
+        )}>{t.appName}</h1>
+        <p className="text-[10px] uppercase tracking-widest font-semibold text-slate-400 mt-1">{t.appSubName}</p>
+      </div>
+    </div>
 
-          <div className="flex items-center gap-2">
-            {/* Language Toggle */}
-            <button 
-              onClick={() => setLang(lang === "ID" ? "EN" : "ID")}
-              className={cn(
-                "p-2 rounded-lg flex items-center gap-2 text-xs font-bold transition-all",
-                isDark ? "bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900"
-              )}
-            >
-              <Languages size={16} />
-              <span className="hidden sm:inline">{lang}</span>
-            </button>
+    {/* --- AREA TOMBOL EXPORT BARU --- */}
+    <div className="hidden md:flex items-center gap-2">
+      <button 
+        onClick={exportToPDF}
+        className={cn(
+          "p-2 rounded-lg flex items-center gap-2 text-xs font-bold transition-all border",
+          isDark 
+            ? "bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white" 
+            : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+        )}
+      >
+        <Download size={14} />
+        <span>PDF</span>
+      </button>
+      <button 
+        onClick={exportToCSV}
+        className={cn(
+          "p-2 rounded-lg flex items-center gap-2 text-xs font-bold transition-all border",
+          isDark 
+            ? "bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white" 
+            : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+        )}
+      >
+        <TableIcon size={14} />
+        <span>CSV</span>
+      </button>
+    </div>
+    {/* --- END AREA TOMBOL EXPORT --- */}
 
-            {/* Dark Mode Toggle */}
-            <button 
-              onClick={() => setIsDark(!isDark)}
-              className={cn(
-                "p-2 rounded-lg transition-all",
-                isDark ? "bg-slate-800 text-yellow-500 hover:bg-slate-700 hover:text-yellow-400" : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900"
-              )}
-            >
-              {isDark ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
-          </div>
-        </div>
-      </header>
+    <div className="flex items-center gap-2">
+      {/* Language Toggle */}
+      <button 
+        onClick={() => setLang(lang === "ID" ? "EN" : "ID")}
+        className={cn(
+          "p-2 rounded-lg flex items-center gap-2 text-xs font-bold transition-all",
+          isDark ? "bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900"
+        )}
+      >
+        <Languages size={16} />
+        <span className="hidden sm:inline">{lang}</span>
+      </button>
+
+      {/* Dark Mode Toggle */}
+      <button 
+        onClick={() => setIsDark(!isDark)}
+        className={cn(
+          "p-2 rounded-lg transition-all",
+          isDark ? "bg-slate-800 text-yellow-500 hover:bg-slate-700 hover:text-yellow-400" : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900"
+        )}
+      >
+        {isDark ? <Sun size={18} /> : <Moon size={18} />}
+      </button>
+    </div>
+  </div>
+</header>
 
       <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+
+      <div ref={reportRef} className="space-y-10"> 
+
         {/* Main Grid: Left (Params) & Right (Results) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        <div  className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           
           {/* Left Column: Inputs & Info */}
           <div className="lg:col-span-4 space-y-14 flex flex-col h-full">
@@ -1182,7 +1271,9 @@ export default function App() {
               </div>
             </div>
           </div>
+          </div>
         </div>
+        
       </main>
 
       {/* Footer */}
