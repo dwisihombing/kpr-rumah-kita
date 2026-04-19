@@ -2,7 +2,7 @@
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/dwisihombing/kpr-rumah-kita/blob/main/Public/screenshots/home.png" />
 
 # 🏠 KPR Rumah Kita
-**Simulasi Kredit Pemilikan Rumah Modern dengan Analisis Cerdas AI**
+**Simulasi Kredit Pemilikan Rumah Modern**
 
 [![React](https://img.shields.io/badge/React-19-blue)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
@@ -17,7 +17,6 @@
 - **🧮 Simulasi Fleksibel**: Mendukung skema bunga **Fixed (Tetap)** maupun **Tiered (Berjenjang)** yang umum digunakan oleh bank-bank di Indonesia.
 - **📅 Jadwal Amortisasi Detail**: Tabel rincian pembayaran pokok dan bunga bulan demi bulan hingga pinjaman lunas.
 - **📊 Visualisasi Data**: Grafik proyeksi sisa pinjaman dan komposisi total pembayaran menggunakan **Recharts** untuk memudahkan analisis visual.
-- **🤖 Penasihat Cerdas AI**: Terintegrasi dengan **Google Gemini AI** untuk menganalisis kelayakan cicilan berdasarkan penghasilan (Debt Service Ratio/DSR) dan memberikan strategi pelunasan yang optimal.
 - **🌓 Mode Tema & Bahasa**: Mendukung Mode Gelap/Terang serta pilihan Bahasa Indonesia dan Inggris.
 
 ## 🛠️ Tech Stack
