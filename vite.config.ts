@@ -5,13 +5,9 @@ import { defineConfig } from 'vite';
 
 export default defineConfig(({ mode }) => {
   return {
-    // DINAMIS: Jika mode production (deploy), pakai nama repo. Jika dev, pakai '/'
-    base: mode === 'production' ? '/kPR-Rumah-Kita/' : '/', 
-    
-    plugins: [
-      react(), 
-      tailwindcss()
-    ],
+    // GANTI 'kpr-rumah-kita' dengan nama repo Anda di GitHub (huruf kecil semua)
+    base: mode === 'production' ? '/kpr-rumah-kita/' : '/', 
+    plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
